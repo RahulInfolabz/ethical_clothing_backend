@@ -1,0 +1,72 @@
+{
+  "info": {
+    "name": "Ethnic Clothing Rental and Inventory Management Platform",
+    "description": "Complete API collection for Ethnic Clothing Rental Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{ "key": "base_url", "value": "http://localhost:8000", "type": "string" }],
+  "item": [
+    {
+      "name": "🔐 Common",
+      "item": [
+        { "name": "Signup", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/signup", "host": ["{{base_url}}"], "path": ["signup"] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Priya Mehta\",\n  \"email\": \"priya@gmail.com\",\n  \"phone\": \"9900000002\",\n  \"password\": \"Priya@123\"\n}" } } },
+        { "name": "Login (User)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/login", "host": ["{{base_url}}"], "path": ["login"] }, "body": { "mode": "raw", "raw": "{\n  \"email\": \"priya@gmail.com\",\n  \"password\": \"Priya@123\"\n}" } } },
+        { "name": "Login (Admin)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/login", "host": ["{{base_url}}"], "path": ["login"] }, "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@clothing.com\",\n  \"password\": \"Admin@123\"\n}" } } },
+        { "name": "Logout", "request": { "method": "GET", "url": { "raw": "{{base_url}}/logout", "host": ["{{base_url}}"], "path": ["logout"] } } },
+        { "name": "Session", "request": { "method": "GET", "url": { "raw": "{{base_url}}/session", "host": ["{{base_url}}"], "path": ["session"] } } },
+        { "name": "Change Password", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/changePassword", "host": ["{{base_url}}"], "path": ["changePassword"] }, "body": { "mode": "raw", "raw": "{\n  \"email\": \"priya@gmail.com\",\n  \"newPassword\": \"NewPass@123\"\n}" } } }
+      ]
+    },
+    {
+      "name": "🌐 Public",
+      "item": [
+        { "name": "Get All Categories", "request": { "method": "GET", "url": { "raw": "{{base_url}}/categories", "host": ["{{base_url}}"], "path": ["categories"] } } },
+        { "name": "Get All Items", "request": { "method": "GET", "url": { "raw": "{{base_url}}/items", "host": ["{{base_url}}"], "path": ["items"] } } },
+        { "name": "Get Items — Filter by Category", "request": { "method": "GET", "url": { "raw": "{{base_url}}/items?category_id=CATEGORY_ID_HERE", "host": ["{{base_url}}"], "path": ["items"], "query": [{ "key": "category_id", "value": "CATEGORY_ID_HERE" }] } } },
+        { "name": "Get Items — Filter by Price Range", "request": { "method": "GET", "url": { "raw": "{{base_url}}/items?min_price=500&max_price=2000", "host": ["{{base_url}}"], "path": ["items"], "query": [{ "key": "min_price", "value": "500" }, { "key": "max_price", "value": "2000" }] } } },
+        { "name": "Get Item Details (with inventory)", "request": { "method": "GET", "url": { "raw": "{{base_url}}/items/ITEM_ID_HERE", "host": ["{{base_url}}"], "path": ["items", "ITEM_ID_HERE"] } } },
+        { "name": "Get All Sizes", "request": { "method": "GET", "url": { "raw": "{{base_url}}/sizes", "host": ["{{base_url}}"], "path": ["sizes"] } } },
+        { "name": "Get All Feedbacks", "request": { "method": "GET", "url": { "raw": "{{base_url}}/feedbacks", "host": ["{{base_url}}"], "path": ["feedbacks"] } } }
+      ]
+    },
+    {
+      "name": "🟢 User (Session Required)",
+      "item": [
+        { "name": "Get Profile", "request": { "method": "GET", "url": { "raw": "{{base_url}}/user/profile", "host": ["{{base_url}}"], "path": ["user", "profile"] } } },
+        { "name": "Update Profile (with image)", "request": { "method": "POST", "url": { "raw": "{{base_url}}/user/updateProfile", "host": ["{{base_url}}"], "path": ["user", "updateProfile"] }, "body": { "mode": "formdata", "formdata": [{ "key": "name", "value": "Priya Mehta", "type": "text" }, { "key": "phone", "value": "9911111111", "type": "text" }, { "key": "profile_image", "src": "", "type": "file" }] } } },
+        { "name": "Place Rental Order", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/user/placeOrder", "host": ["{{base_url}}"], "path": ["user", "placeOrder"] }, "body": { "mode": "raw", "raw": "{\n  \"item_id\": \"ITEM_ID_HERE\",\n  \"size_id\": \"SIZE_ID_HERE\",\n  \"rent_date\": \"2026-02-01\",\n  \"return_date\": \"2026-02-05\"\n}" } } },
+        { "name": "My Orders", "request": { "method": "GET", "url": { "raw": "{{base_url}}/user/myOrders", "host": ["{{base_url}}"], "path": ["user", "myOrders"] } } },
+        { "name": "Cancel Order", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/user/cancelOrder", "host": ["{{base_url}}"], "path": ["user", "cancelOrder"] }, "body": { "mode": "raw", "raw": "{\n  \"order_id\": \"ORDER_ID_HERE\"\n}" } } },
+        { "name": "Generate Razorpay Order ID", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/user/genOrderId", "host": ["{{base_url}}"], "path": ["user", "genOrderId"] }, "body": { "mode": "raw", "raw": "{\n  \"order_id\": \"ORDER_ID_HERE\"\n}" } } },
+        { "name": "Verify Razorpay Payment", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/user/verifyPayment", "host": ["{{base_url}}"], "path": ["user", "verifyPayment"] }, "body": { "mode": "raw", "raw": "{\n  \"order_id\": \"ORDER_ID_HERE\",\n  \"razorpay_order_id\": \"order_XXXX\",\n  \"razorpay_payment_id\": \"pay_XXXX\",\n  \"razorpay_signature\": \"sig_XXXX\"\n}" } } },
+        { "name": "Add Feedback", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/user/addFeedback", "host": ["{{base_url}}"], "path": ["user", "addFeedback"] }, "body": { "mode": "raw", "raw": "{\n  \"booking_id\": \"ORDER_ID_HERE\",\n  \"rating\": 5,\n  \"feedback\": \"Absolutely stunning outfit! Perfect fit and excellent quality.\"\n}" } } }
+      ]
+    },
+    {
+      "name": "🔴 Admin (Session Required)",
+      "item": [
+        { "name": "Get All Users", "request": { "method": "GET", "url": { "raw": "{{base_url}}/admin/users", "host": ["{{base_url}}"], "path": ["admin", "users"] } } },
+        { "name": "Update User Status (Activate)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/admin/updateUserStatus", "host": ["{{base_url}}"], "path": ["admin", "updateUserStatus"] }, "body": { "mode": "raw", "raw": "{\n  \"user_id\": \"USER_ID_HERE\",\n  \"status\": \"Active\"\n}" } } },
+        { "name": "Update User Status (Deactivate)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/admin/updateUserStatus", "host": ["{{base_url}}"], "path": ["admin", "updateUserStatus"] }, "body": { "mode": "raw", "raw": "{\n  \"user_id\": \"USER_ID_HERE\",\n  \"status\": \"Inactive\"\n}" } } },
+        { "name": "Add Category (with image)", "request": { "method": "POST", "url": { "raw": "{{base_url}}/admin/addCategory", "host": ["{{base_url}}"], "path": ["admin", "addCategory"] }, "body": { "mode": "formdata", "formdata": [{ "key": "name", "value": "Wedding Wear", "type": "text" }, { "key": "category", "src": "", "type": "file" }] } } },
+        { "name": "Update Category (with image)", "request": { "method": "POST", "url": { "raw": "{{base_url}}/admin/updateCategory", "host": ["{{base_url}}"], "path": ["admin", "updateCategory"] }, "body": { "mode": "formdata", "formdata": [{ "key": "id", "value": "CATEGORY_ID_HERE", "type": "text" }, { "key": "name", "value": "Bridal Wedding Wear", "type": "text" }, { "key": "status", "value": "Active", "type": "text" }, { "key": "category", "src": "", "type": "file" }] } } },
+        { "name": "Delete Category", "request": { "method": "GET", "url": { "raw": "{{base_url}}/admin/deleteCategory/CATEGORY_ID_HERE", "host": ["{{base_url}}"], "path": ["admin", "deleteCategory", "CATEGORY_ID_HERE"] } } },
+        { "name": "Get All Categories (Admin)", "request": { "method": "GET", "url": { "raw": "{{base_url}}/admin/categories", "host": ["{{base_url}}"], "path": ["admin", "categories"] } } },
+        { "name": "Add Item (with image)", "request": { "method": "POST", "url": { "raw": "{{base_url}}/admin/addItem", "host": ["{{base_url}}"], "path": ["admin", "addItem"] }, "body": { "mode": "formdata", "formdata": [{ "key": "category_id", "value": "CATEGORY_ID_HERE", "type": "text" }, { "key": "name", "value": "Designer Bridal Lehenga", "type": "text" }, { "key": "description", "value": "Heavy embroidered bridal lehenga with dupatta", "type": "text" }, { "key": "price", "value": "2500", "type": "text" }, { "key": "image", "src": "", "type": "file" }] } } },
+        { "name": "Update Item (with image)", "request": { "method": "POST", "url": { "raw": "{{base_url}}/admin/updateItem", "host": ["{{base_url}}"], "path": ["admin", "updateItem"] }, "body": { "mode": "formdata", "formdata": [{ "key": "id", "value": "ITEM_ID_HERE", "type": "text" }, { "key": "name", "value": "Premium Designer Lehenga", "type": "text" }, { "key": "price", "value": "3000", "type": "text" }, { "key": "status", "value": "Available", "type": "text" }, { "key": "image", "src": "", "type": "file" }] } } },
+        { "name": "Delete Item", "request": { "method": "GET", "url": { "raw": "{{base_url}}/admin/deleteItem/ITEM_ID_HERE", "host": ["{{base_url}}"], "path": ["admin", "deleteItem", "ITEM_ID_HERE"] } } },
+        { "name": "Get All Items (Admin)", "request": { "method": "GET", "url": { "raw": "{{base_url}}/admin/items", "host": ["{{base_url}}"], "path": ["admin", "items"] } } },
+        { "name": "Add Inventory", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/admin/addInventory", "host": ["{{base_url}}"], "path": ["admin", "addInventory"] }, "body": { "mode": "raw", "raw": "{\n  \"item_id\": \"ITEM_ID_HERE\",\n  \"size_id\": \"SIZE_ID_HERE\",\n  \"quantity\": 5,\n  \"available\": 5\n}" } } },
+        { "name": "Update Inventory", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/admin/updateInventory", "host": ["{{base_url}}"], "path": ["admin", "updateInventory"] }, "body": { "mode": "raw", "raw": "{\n  \"id\": \"INVENTORY_ID_HERE\",\n  \"quantity\": 8,\n  \"available\": 7\n}" } } },
+        { "name": "Delete Inventory", "request": { "method": "GET", "url": { "raw": "{{base_url}}/admin/deleteInventory/INVENTORY_ID_HERE", "host": ["{{base_url}}"], "path": ["admin", "deleteInventory", "INVENTORY_ID_HERE"] } } },
+        { "name": "Get All Inventory", "request": { "method": "GET", "url": { "raw": "{{base_url}}/admin/inventory", "host": ["{{base_url}}"], "path": ["admin", "inventory"] } } },
+        { "name": "Get All Orders", "request": { "method": "GET", "url": { "raw": "{{base_url}}/admin/orders", "host": ["{{base_url}}"], "path": ["admin", "orders"] } } },
+        { "name": "Update Order Status (Returned)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/admin/updateOrderStatus", "host": ["{{base_url}}"], "path": ["admin", "updateOrderStatus"] }, "body": { "mode": "raw", "raw": "{\n  \"id\": \"ORDER_ID_HERE\",\n  \"status\": \"Returned\"\n}" } } },
+        { "name": "Update Order Status (Late)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": { "raw": "{{base_url}}/admin/updateOrderStatus", "host": ["{{base_url}}"], "path": ["admin", "updateOrderStatus"] }, "body": { "mode": "raw", "raw": "{\n  \"id\": \"ORDER_ID_HERE\",\n  \"status\": \"Late\"\n}" } } },
+        { "name": "Get All Payments", "request": { "method": "GET", "url": { "raw": "{{base_url}}/admin/payments", "host": ["{{base_url}}"], "path": ["admin", "payments"] } } },
+        { "name": "Get All Feedbacks (Admin)", "request": { "method": "GET", "url": { "raw": "{{base_url}}/admin/feedbacks", "host": ["{{base_url}}"], "path": ["admin", "feedbacks"] } } },
+        { "name": "Dashboard Stats", "request": { "method": "GET", "url": { "raw": "{{base_url}}/admin/dashboardStats", "host": ["{{base_url}}"], "path": ["admin", "dashboardStats"] } } }
+      ]
+    }
+  ]
+}
