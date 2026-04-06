@@ -3,38 +3,18 @@ const connectDB = require("../../db/dbConnect");
 
 async function AddFeedback(req, res) {
   try {
-    const user = req.session.user;
-    if (!user || !user.isAuth || user.session.role !== "User") {
-      return res.status(401).json({ success: false, message: "Unauthorized access" });
-    }
-
     const { booking_id, rating, feedback } = req.body;
 
-    if (!booking_id || !rating || !feedback) {
-      return res.status(400).json({ success: false, message: "Order ID, rating and feedback are required" });
-    }
-
-    if (!ObjectId.isValid(booking_id)) {
-      return res.status(400).json({ success: false, message: "Invalid order ID" });
-    }
-
-    if (rating < 1 || rating > 5) {
-      return res.status(400).json({ success: false, message: "Rating must be between 1 and 5" });
-    }
+    if (!booking_id || !rating || !feedback) return res.status(400).json({ success: false, message: "Order ID, rating and feedback are required" });
+    if (!ObjectId.isValid(booking_id)) return res.status(400).json({ success: false, message: "Invalid order ID" });
+    if (rating < 1 || rating > 5) return res.status(400).json({ success: false, message: "Rating must be between 1 and 5" });
 
     const db = await connectDB();
-
-    const order = await db.collection("rental_orders").findOne({
-      _id: new ObjectId(booking_id),
-      user_id: new ObjectId(user.session._id),
-    });
-
-    if (!order) {
-      return res.status(404).json({ success: false, message: "Order not found" });
-    }
+    const order = await db.collection("rental_orders").findOne({ _id: new ObjectId(booking_id), user_id: new ObjectId(req.user._id) });
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
 
     await db.collection("feedbacks").insertOne({
-      user_id: new ObjectId(user.session._id),
+      user_id: new ObjectId(req.user._id),
       booking_id: new ObjectId(booking_id),
       rating: parseFloat(rating),
       feedback,
@@ -47,5 +27,4 @@ async function AddFeedback(req, res) {
     return res.status(500).json({ success: false, message: "Internal server error" });
   }
 }
-
 module.exports = { AddFeedback };

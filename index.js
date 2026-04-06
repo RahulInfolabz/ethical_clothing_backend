@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const session = require("express-session");
 const connectDB = require("./db/dbConnect");
+const authMiddleware = require("./middleware/auth");
 require("dotenv").config();
 
 // ── Multer Instances ──────────────────────────────────────────────────────────
@@ -59,22 +59,17 @@ const PORT = process.env.PORT || 8000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "clothing_rental_secret",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day
-  })
-);
-
-app.use(
-  cors({
-    origin: ["http://localhost:3000", "http://localhost:3001", "http://localhost:5173", "http://localhost:5174"],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  })
-);
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "https://your-frontend.onrender.com", // ← replace with your actual frontend URL
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+}));
 
 // ── Static File Serving ───────────────────────────────────────────────────────
 app.use("/uploads/categories", express.static("uploads/categories"));
@@ -97,64 +92,49 @@ app.post("/changePassword", ChangePassword);
 //  PUBLIC APIs (no auth required)
 // ─────────────────────────────────────────────────────────────────────────────
 app.get("/categories", GetCategories);
-// filters: ?category_id= ?min_price= ?max_price=
 app.get("/items", GetItems);
 app.get("/items/:id", GetItemDetails);
 app.get("/sizes", GetSizes);
 app.get("/feedbacks", GetFeedbacks);
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  USER APIs (session required)
+//  USER APIs (JWT required)
 // ─────────────────────────────────────────────────────────────────────────────
-app.get("/user/profile", GetProfile);
-app.post("/user/updateProfile", profileUpload.single("profile_image"), UpdateProfile);
-app.post("/user/placeOrder", PlaceOrder);
-app.get("/user/myOrders", MyOrders);
-app.post("/user/cancelOrder", CancelOrder);
-app.post("/user/genOrderId", GenOrderId);
-app.post("/user/verifyPayment", VerifyPayment);
-app.post("/user/addFeedback", AddFeedback);
+app.get("/user/profile", authMiddleware, GetProfile);
+app.post("/user/updateProfile", authMiddleware, profileUpload.single("profile_image"), UpdateProfile);
+app.post("/user/placeOrder", authMiddleware, PlaceOrder);
+app.get("/user/myOrders", authMiddleware, MyOrders);
+app.post("/user/cancelOrder", authMiddleware, CancelOrder);
+app.post("/user/genOrderId", authMiddleware, GenOrderId);
+app.post("/user/verifyPayment", authMiddleware, VerifyPayment);
+app.post("/user/addFeedback", authMiddleware, AddFeedback);
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  ADMIN APIs (session required)
+//  ADMIN APIs (JWT required)
 // ─────────────────────────────────────────────────────────────────────────────
-
-// Users
-app.get("/admin/users", GetUsers);
-app.post("/admin/updateUserStatus", UpdateUserStatus);
-
-// Categories
-app.post("/admin/addCategory", categoryUpload.single("category"), AddCategory);
-app.post("/admin/updateCategory", categoryUpload.single("category"), UpdateCategory);
-app.get("/admin/deleteCategory/:id", DeleteCategory);
-app.get("/admin/categories", GetAdminCategories);
-
-// Clothing Items
-app.post("/admin/addItem", itemUpload.single("image"), AddItem);
-app.post("/admin/updateItem", itemUpload.single("image"), UpdateItem);
-app.get("/admin/deleteItem/:id", DeleteItem);
-app.get("/admin/items", GetAdminItems);
-
-// Inventory
-app.post("/admin/addInventory", AddInventory);
-app.post("/admin/updateInventory", UpdateInventory);
-app.get("/admin/deleteInventory/:id", DeleteInventory);
-app.get("/admin/inventory", GetInventory);
-
-// Orders
-app.get("/admin/orders", GetOrders);
-app.post("/admin/updateOrderStatus", UpdateOrderStatus);
-
-// Reports
-app.get("/admin/payments", GetPayments);
-app.get("/admin/feedbacks", GetAdminFeedbacks);
-app.get("/admin/dashboardStats", DashboardStats);
-
+app.get("/admin/users", authMiddleware, GetUsers);
+app.post("/admin/updateUserStatus", authMiddleware, UpdateUserStatus);
+app.post("/admin/addCategory", authMiddleware, categoryUpload.single("category"), AddCategory);
+app.post("/admin/updateCategory", authMiddleware, categoryUpload.single("category"), UpdateCategory);
+app.get("/admin/deleteCategory/:id", authMiddleware, DeleteCategory);
+app.get("/admin/categories", authMiddleware, GetAdminCategories);
+app.post("/admin/addItem", authMiddleware, itemUpload.single("image"), AddItem);
+app.post("/admin/updateItem", authMiddleware, itemUpload.single("image"), UpdateItem);
+app.get("/admin/deleteItem/:id", authMiddleware, DeleteItem);
+app.get("/admin/items", authMiddleware, GetAdminItems);
+app.post("/admin/addInventory", authMiddleware, AddInventory);
+app.post("/admin/updateInventory", authMiddleware, UpdateInventory);
+app.get("/admin/deleteInventory/:id", authMiddleware, DeleteInventory);
+app.get("/admin/inventory", authMiddleware, GetInventory);
+app.get("/admin/orders", authMiddleware, GetOrders);
+app.post("/admin/updateOrderStatus", authMiddleware, UpdateOrderStatus);
+app.get("/admin/payments", authMiddleware, GetPayments);
+app.get("/admin/feedbacks", authMiddleware, GetAdminFeedbacks);
+app.get("/admin/dashboardStats", authMiddleware, DashboardStats);
 
 app.get("/", (req, res) => {
   res.send("Welcome to Clothing Service Platform API!");
 });
-
 
 // ─────────────────────────────────────────────────────────────────────────────
 app.listen(PORT, () =>
